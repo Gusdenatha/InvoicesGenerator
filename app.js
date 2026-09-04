@@ -7,11 +7,42 @@ const SPREADSHEET_ID = '1Lrdd3wrPHZneDly_iStPJRxq9mfQy2p5eWm3B64U16Y'; // ID spr
 // INIT
 // ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  translateUI();
   muatProfil();
   autoGenerateNoInvoice();
   setTanggalHariIni();
   tambahItem(); // default 1 row
 });
+
+// English UI labels (keeps the data model/API field names unchanged).
+function translateUI() {
+  const replacements = {
+    'Generator Invoice Profesional':'Professional Invoice Generator',
+    'Isi Form':'Fill Form', 'Hasil Invoice':'Invoice Result',
+    'Profil Perusahaan':'Company Profile',
+    'Tersimpan otomatis di browser — tidak perlu isi ulang':'Automatically saved in your browser — no need to re-enter',
+    'Tersimpan':'Saved', 'Nama Perusahaan / Usaha':'Company / Business Name',
+    'Nama perusahaan':'Company name', 'Alamat Perusahaan':'Company Address',
+    'Telepon':'Phone', 'Nama Bank':'Bank Name', 'Nomor Rekening':'Account Number',
+    'Simpan Profil':'Save Profile', 'Data Klien':'Client Details',
+    'Informasi penerima invoice':'Invoice recipient information',
+    'Nama Klien / Perusahaan Klien':'Client / Client Company Name',
+    'Alamat Klien':'Client Address', 'Telepon / Email Klien':'Client Phone / Email',
+    'Info Invoice':'Invoice Information', 'Nomor, tanggal, dan detail invoice':'Invoice number, date, and details',
+    'No. Invoice':'Invoice No.', 'Tanggal Invoice':'Invoice Date', 'Jatuh Tempo':'Due Date',
+    'Pemohon':'Requested By', 'Nama pemohon invoice':'Invoice requester name',
+    'Deskripsi singkat pekerjaan, contoh: Jasa Desain Logo...':'Brief work description, e.g. Logo Design Service...',
+    'Item / Jasa':'Items / Services', 'Daftar produk atau layanan yang ditagihkan':'Products or services being billed',
+    'Deskripsi':'Description', 'Harga Satuan':'Unit Price', 'Jumlah':'Amount',
+    'Tambah Item':'Add Item', 'Sembunyikan':'Hide', 'Tampilkan':'Show',
+    'Lihat Hasil Invoice':'View Invoice', 'Reset Form':'Reset Form',
+    'Syarat dan ketentuan pembayaran':'Payment terms and conditions'
+  };
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(node => { let t = node.nodeValue; Object.keys(replacements).forEach(k => { t = t.split(k).join(replacements[k]); }); node.nodeValue = t; });
+  document.querySelectorAll('[placeholder]').forEach(el => { Object.keys(replacements).forEach(k => { if (el.placeholder === k) el.placeholder = replacements[k]; }); });
+}
 
 // ────────────────────────────────────────────────
 // PROFIL PERUSAHAAN

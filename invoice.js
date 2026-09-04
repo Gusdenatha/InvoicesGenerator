@@ -12,6 +12,7 @@ const GAS_URL =
 let INV = null; // current invoice data
 
 document.addEventListener("DOMContentLoaded", () => {
+  translateInvoiceUI();
   const raw = localStorage.getItem("inv_current");
   if (!raw) {
     showNoDataBanner();
@@ -26,6 +27,22 @@ document.addEventListener("DOMContentLoaded", () => {
     showNoDataBanner();
   }
 });
+
+function translateInvoiceUI() {
+  const map = {
+    'Generator Invoice Profesional':'Professional Invoice Generator',
+    'Isi Form':'Fill Form', 'Hasil Invoice':'Invoice Result',
+    'Kembali Edit Form':'Back to Edit Form', 'Cetak / Print':'Print',
+    'Kirim ke Sheet':'Send to Sheet', 'Download PDF':'Download PDF',
+    'Detail Invoice':'Invoice Details', 'Tanggal':'Date', 'Jatuh Tempo':'Due Date',
+    'Perihal':'Subject', 'Pemohon':'Requested By', 'Deskripsi':'Description',
+    'Harga Satuan':'Unit Price', 'Jumlah':'Amount', 'Dibuat dengan':'Created with',
+    'Informasi Pembayaran':'Payment Information'
+  };
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(node => { let t = node.nodeValue; Object.keys(map).forEach(k => { t = t.split(k).join(map[k]); }); node.nodeValue = t; });
+}
 
 // ────────────────────────────────────────────────
 // RENDER INVOICE
