@@ -63,18 +63,30 @@ function terapkanProfil(p) {
 
 function muatProfil() {
   const raw = localStorage.getItem('inv_profil');
-  try {
-    if (raw) terapkanProfil(JSON.parse(raw));
-  } catch (_) {}
+  let profilLokal = null;
+  try { if (raw) profilLokal = JSON.parse(raw); } catch (_) {}
 
   // JSONP dipakai karena Web App biasanya tidak mengirim header CORS.
   const cb = `profilCallback_${Date.now()}`;
-  window[cb] = (p) => { if (p) { terapkanProfil(p); localStorage.setItem('inv_profil', JSON.stringify(p)); } cleanup(); };
+  let remoteBerhasil = false;
+  window[cb] = (p) => {
+    if (p && p.namaPerusahaan) {
+      remoteBerhasil = true;
+      terapkanProfil(p);
+      localStorage.setItem('inv_profil', JSON.stringify(p));
+    }
+    cleanup();
+  };
   const cleanup = () => { delete window[cb]; script.remove(); };
   const script = document.createElement('script');
-  script.src = `${GAS_URL}?action=getProfile&spreadsheetId=${encodeURIComponent(SPREADSHEET_ID)}&callback=${cb}`;
+  script.src = `${GAS_URL}?action=getProfile&spreadsheetId=${encodeURIComponent(SPREADSHEET_ID)}&callback=${cb}&t=${Date.now()}`;
   script.onerror = cleanup;
   document.head.appendChild(script);
+  // Gunakan cache lokal hanya jika server tidak merespons.
+  setTimeout(() => {
+    if (!remoteBerhasil && profilLokal) terapkanProfil(profilLokal);
+    cleanup();
+  }, 4000);
 }
 
 
