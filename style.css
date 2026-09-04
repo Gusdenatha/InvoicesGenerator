@@ -57,7 +57,7 @@
 /* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;font-size:16px}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--n900);line-height:1.6;min-height:100vh}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--n900);line-height:1.6;min-height:100vh;overflow-x:hidden}
 a{color:var(--p400);text-decoration:none}
 a:hover{text-decoration:underline}
 button{font-family:inherit;cursor:pointer}
@@ -140,6 +140,7 @@ button{font-family:inherit;cursor:pointer}
   padding: 1.5rem;
   box-shadow: var(--shadow-md);
   border: 1px solid rgba(109,40,217,.06);
+  min-width: 0;
   transition: var(--trans);
 }
 .card:hover{box-shadow:var(--shadow-lg)}
@@ -504,21 +505,46 @@ details[open] .accordion-arrow{transform:rotate(180deg)}
   .inv-total-grand{border-radius:0}
 }
 @media(max-width:680px){
+  /* Tabel item tetap terbaca pada layar sempit; geser horizontal bila perlu. */
+  #section-items{overflow-x:auto}
+  #section-items .item-header,
+  #section-items #itemsContainer{min-width:511px}
   .page-form .form-main{padding:1rem 1rem 4rem}
+  .topbar-inner{padding:.75rem 1rem}
+  .topbar-brand{min-width:0}
+  .brand-name{font-size:1.05rem}
+  .brand-sub{font-size:.62rem;white-space:nowrap}
   .field-row{grid-template-columns:1fr}
   .item-header{grid-template-columns:minmax(150px,1fr) 120px 55px 130px 36px;font-size:.65rem}
   .item-row{grid-template-columns:minmax(150px,1fr) 120px 55px 130px 36px}
   .inv-toolbar{padding:.75rem 1rem}
+  .inv-toolbar-info{order:-1;width:100%;font-size:.8rem}
+  .inv-toolbar-actions{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+  .inv-toolbar-actions .btn{width:100%;padding:.55rem .5rem;font-size:.78rem}
   .inv-page-wrap{padding:0 .75rem;margin-top:1.5rem}
   .inv-doc-header{min-height:auto}
+  .inv-doc-header{padding:1.25rem 1rem;gap:.75rem}
+  .inv-doc-company{max-width:52%}
+  .inv-doc-company-name{font-size:1.05rem}
+  .inv-doc-title{font-size:1.25rem;padding:.45rem .8rem;letter-spacing:2px}
+  .inv-doc-meta{padding:1.1rem 1rem}
   .inv-th,.inv-td{padding:.5rem 1rem}
+  .inv-th{font-size:.62rem}
+  .inv-td{font-size:.75rem}
 }
 @media(max-width:480px){
   .topbar-steps{display:none}
   .action-bar{flex-direction:column}
   .action-bar .btn{width:100%}
-  .inv-toolbar-actions{width:100%}
+  .inv-toolbar-actions{grid-template-columns:1fr}
   .inv-toolbar-actions .btn{flex:1}
+  .inv-page-wrap{padding:0 .5rem}
+  .inv-doc-header{align-items:flex-start}
+  .inv-doc-company{max-width:58%}
+  .inv-doc-title{font-size:1.05rem;padding:.4rem .55rem}
+  .inv-detail-table{font-size:.74rem}
+  .inv-det-k{padding-right:.45rem}
+  .inv-totals-inner{padding-left:1rem;padding-right:1rem}
 }
 
 /* ════════════════════════════════════════════════
