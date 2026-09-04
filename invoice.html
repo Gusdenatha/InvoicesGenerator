@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hasil Invoice — InvoiceGen</title>
+  <meta name="description" content="Hasil invoice profesional siap download sebagai PDF." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page-invoice">
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-brand">
+        <div class="brand-logo">
+          <span class="brand-icon">⚡</span>
+        </div>
+        <div>
+          <h1 class="brand-name">InvoiceGen</h1>
+          <p class="brand-sub">Generator Invoice Profesional</p>
+        </div>
+      </div>
+      <nav class="topbar-steps">
+        <div class="step step-done" id="step1-indicator">
+          <span class="step-num">✓</span>
+          <span class="step-label">Isi Form</span>
+        </div>
+        <div class="step-divider step-divider-done"></div>
+        <div class="step step-active" id="step2-indicator">
+          <span class="step-num">2</span>
+          <span class="step-label">Hasil Invoice</span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ═══════════════════ INVOICE PAGE MAIN ═══════════════════ -->
+  <main class="invoice-main">
+
+    <!-- ── TOOLBAR ── -->
+    <div class="inv-toolbar">
+      <button class="btn btn-ghost-white" onclick="window.location.href='index.html'">
+        ← Kembali Edit Form
+      </button>
+      <div class="inv-toolbar-info" id="toolbar-noInv">Invoice #—</div>
+      <div class="inv-toolbar-actions">
+        <button class="btn btn-outline-white" id="btnCetak" onclick="cetakInvoice()">
+          🖨️ Cetak / Print
+        </button>
+        <button class="btn btn-outline-white" id="btnKirimSheet" onclick="kirimKeSheet()">
+          📊 Kirim ke Sheet
+        </button>
+        <button class="btn btn-gold btn-lg" id="btnDownloadPDF" onclick="downloadPDF()">
+          ⬇ Download PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- ── INVOICE DOCUMENT ── -->
+    <div class="inv-page-wrap">
+      <div class="invoice-doc" id="invoiceDoc">
+
+        <!-- ══ INVOICE HEADER ══ -->
+        <div class="inv-doc-header">
+          <div class="inv-doc-company">
+            <div class="inv-doc-company-name" id="doc-namaPerusahaan">Nama Perusahaan</div>
+            <div class="inv-doc-company-addr" id="doc-alamatPerusahaan"></div>
+            <div class="inv-doc-company-contact" id="doc-kontakPerusahaan"></div>
+          </div>
+          <div class="inv-doc-title-block">
+            <div class="inv-doc-title">INVOICE</div>
+            <div class="inv-doc-deco-triangle"></div>
+          </div>
+        </div>
+
+        <!-- ══ META ROW ══ -->
+        <div class="inv-doc-meta">
+          <div class="inv-doc-billto">
+            <div class="inv-meta-label">BILL TO</div>
+            <div class="inv-doc-client-name" id="doc-namaKlien">—</div>
+            <div class="inv-doc-client-addr" id="doc-alamatKlien"></div>
+            <div class="inv-doc-client-contact" id="doc-kontakKlien"></div>
+          </div>
+          <div class="inv-doc-details">
+            <div class="inv-meta-label">DETAIL INVOICE</div>
+            <table class="inv-detail-table">
+              <tr>
+                <td class="inv-det-k">No. Invoice</td>
+                <td class="inv-det-v" id="doc-noInvoice">—</td>
+              </tr>
+              <tr>
+                <td class="inv-det-k">Tanggal</td>
+                <td class="inv-det-v" id="doc-tanggal">—</td>
+              </tr>
+              <tr>
+                <td class="inv-det-k">Jatuh Tempo</td>
+                <td class="inv-det-v" id="doc-jatuhTempo">—</td>
+              </tr>
+              <tr id="doc-perihalRow">
+                <td class="inv-det-k">Perihal</td>
+                <td class="inv-det-v" id="doc-perihal"></td>
+              </tr>
+              <tr id="doc-pemohonRow">
+                <td class="inv-det-k">Pemohon</td>
+                <td class="inv-det-v" id="doc-pemohon"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- ══ ITEMS TABLE ══ -->
+        <table class="inv-doc-table">
+          <thead>
+            <tr>
+              <th class="inv-th">DESKRIPSI</th>
+              <th class="inv-th inv-th-r">HARGA SATUAN</th>
+              <th class="inv-th inv-th-r">QTY</th>
+              <th class="inv-th inv-th-r">JUMLAH</th>
+            </tr>
+          </thead>
+          <tbody id="doc-itemsBody">
+          </tbody>
+        </table>
+
+        <!-- ══ TOTALS ══ -->
+        <div class="inv-doc-totals">
+          <div class="inv-totals-inner">
+            <div class="inv-total-row inv-total-sub">
+              <span>Subtotal</span>
+              <span id="doc-subtotal">Rp 0</span>
+            </div>
+            <div class="inv-total-row inv-total-tax" id="doc-taxRow">
+              <span>Pajak</span>
+              <span id="doc-pajak">Rp 0</span>
+            </div>
+            <div class="inv-total-grand">
+              <span>GRAND TOTAL</span>
+              <span id="doc-grandTotal">Rp 0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ TERMS & BANK ══ -->
+        <div class="inv-doc-footer">
+          <div class="inv-doc-terms">
+            <div class="inv-footer-title">Terms &amp; Conditions</div>
+            <p class="inv-footer-text" id="doc-terms"></p>
+          </div>
+          <div class="inv-doc-bank">
+            <div class="inv-footer-title">Informasi Pembayaran</div>
+            <div class="inv-bank-row" id="doc-bankName"></div>
+            <div class="inv-bank-row" id="doc-bankNum"></div>
+          </div>
+        </div>
+
+        <!-- ══ FOOTER STRIP ══ -->
+        <div class="inv-doc-strip"></div>
+
+      </div>
+      <!-- end invoice-doc -->
+
+      <!-- WATERMARK (tidak ikut PDF) -->
+      <div class="inv-generated-note" id="generatedNote">
+        Dibuat dengan <strong>InvoiceGen</strong> — <span id="generatedTime"></span>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- External libs (hanya di halaman invoice) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="invoice.js"></script>
+</body>
+</html>

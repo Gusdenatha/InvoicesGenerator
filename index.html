@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InvoiceGen — Buat Invoice Profesional</title>
+  <meta name="description" content="Generator invoice profesional. Isi form, preview, download PDF, dan sinkronisasi ke Google Sheets." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page-form">
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-brand">
+        <div class="brand-logo">
+          <span class="brand-icon">⚡</span>
+        </div>
+        <div>
+          <h1 class="brand-name">InvoiceGen</h1>
+          <p class="brand-sub">Generator Invoice Profesional</p>
+        </div>
+      </div>
+      <nav class="topbar-steps">
+        <div class="step step-active" id="step1-indicator">
+          <span class="step-num">1</span>
+          <span class="step-label">Isi Form</span>
+        </div>
+        <div class="step-divider"></div>
+        <div class="step" id="step2-indicator">
+          <span class="step-num">2</span>
+          <span class="step-label">Hasil Invoice</span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ═══════════════════ MAIN ═══════════════════ -->
+  <main class="form-main">
+    <div class="form-container">
+
+      <!-- ─── COLUMN A: Profil & Pengaturan ─── -->
+      <div class="form-col col-left">
+
+        <!-- ░░ 1. PROFIL PERUSAHAAN ░░ -->
+        <section class="card" id="section-profil">
+          <div class="card-head">
+            <div class="card-head-icon">🏢</div>
+            <div>
+              <h2 class="card-title">Profil Perusahaan</h2>
+              <p class="card-desc">Tersimpan otomatis di browser — tidak perlu isi ulang</p>
+            </div>
+            <span class="badge badge-saved" id="profilBadge" style="display:none">✓ Tersimpan</span>
+          </div>
+
+          <div class="divider-gold"></div>
+
+          <div class="field-group">
+            <label class="label" for="namaPerusahaan">Nama Perusahaan / Usaha <span class="req">*</span></label>
+            <input class="input" type="text" id="namaPerusahaan" placeholder="Nama perusahaan" />
+          </div>
+
+          <div class="field-group">
+            <label class="label" for="alamatPerusahaan">Alamat Perusahaan</label>
+            <textarea class="textarea" id="alamatPerusahaan" rows="2" placeholder="Jl. Gatot Subroto No.1, Denpasar..."></textarea>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="label" for="teleponPerusahaan">Telepon</label>
+              <input class="input" type="text" id="teleponPerusahaan" placeholder="0812xxxxxxxx" />
+            </div>
+            <div class="field-group">
+              <label class="label" for="emailPerusahaan">Email</label>
+              <input class="input" type="email" id="emailPerusahaan" placeholder="email@domain.com" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="label" for="namaBank">Nama Bank</label>
+              <input class="input" type="text" id="namaBank" placeholder="BCA, Mandiri, BNI..." />
+            </div>
+            <div class="field-group">
+              <label class="label" for="nomorRekening">Nomor Rekening</label>
+              <input class="input" type="text" id="nomorRekening" placeholder="1234567890" />
+            </div>
+          </div>
+
+          <button class="btn btn-outline-purple w-full" id="btnSimpanProfil" onclick="simpanProfil()">
+            💾 &nbsp;Simpan Profil
+          </button>
+        </section>
+
+        <!-- ░░ 2. INTEGRASI GOOGLE SHEET ░░ -->
+        <!-- <section class="card" id="section-gas" hidden>
+          <div class="card-head">
+            <div class="card-head-icon">📊</div>
+            <div>
+              <h2 class="card-title">Sinkronisasi Google Sheet</h2>
+              <p class="card-desc">Simpan rekap invoice ke Google Sheets otomatis</p>
+            </div>
+          </div>
+          <div class="divider-gold"></div>
+
+          <details class="accordion">
+            <summary class="accordion-summary">
+              <span>📋 Cara Setup Google Apps Script</span>
+              <span class="accordion-arrow">▼</span>
+            </summary>
+            <div class="accordion-body">
+              <div class="step-guide">
+                <div class="step-item">
+                  <span class="step-badge">1</span>
+                  <span>Buka Google Sheet Anda &amp; masuk ke menu <strong>Ekstensi &gt; Apps Script</strong>.</span>
+                </div>
+                <div class="step-item">
+                  <span class="step-badge">2</span>
+                  <span>Salin kode script di bawah ini, hapus kode lama di Apps Script, lalu tempelkan.</span>
+                </div>
+                <button class="btn btn-outline-purple btn-sm w-full" onclick="copyGASCode()" style="margin:.3rem 0;">
+                  📋 Copy Kode Apps Script
+                </button>
+                <div class="step-item">
+                  <span class="step-badge">3</span>
+                  <span>Klik <strong>Deploy &gt; New deployment</strong>, pilih tipe <strong>Web app</strong>.</span>
+                </div>
+                <div class="step-item">
+                  <span class="step-badge">4</span>
+                  <span>Set <em>Execute as: Me</em> dan <em>Who has access: Anyone (Siapa Saja)</em>. Lalu Deploy.</span>
+                </div>
+                <div class="step-item">
+                  <span class="step-badge">5</span>
+                  <span>Salin URL Web App yang dihasilkan &amp; tempel ke variabel <code>GAS_URL</code> di <code>app.js</code> / <code>invoice.js</code>.</span>
+                </div>
+              </div>
+            </div>
+          </details>
+        </section> -->
+
+      </div>
+
+      <!-- ─── COLUMN B: Data Invoice ─── -->
+      <div class="form-col col-right">
+
+        <!-- ░░ 3. DATA KLIEN ░░ -->
+        <section class="card" id="section-klien">
+          <div class="card-head">
+            <div class="card-head-icon">👤</div>
+            <div>
+              <h2 class="card-title">Data Klien</h2>
+              <p class="card-desc">Informasi penerima invoice</p>
+            </div>
+          </div>
+          <div class="divider-gold"></div>
+
+          <div class="field-group">
+            <label class="label" for="namaKlien">Nama Klien / Perusahaan Klien <span class="req">*</span></label>
+            <input class="input" type="text" id="namaKlien" placeholder="PT Klien Contoh" />
+          </div>
+
+          <div class="field-group">
+            <label class="label" for="alamatKlien">Alamat Klien</label>
+            <textarea class="textarea" id="alamatKlien" rows="2" placeholder="Alamat lengkap klien..."></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="label" for="kontakKlien">Telepon / Email Klien <span class="optional">(opsional)</span></label>
+            <input class="input" type="text" id="kontakKlien" placeholder="0812xxxxxxx / email@klien.com" />
+          </div>
+        </section>
+
+        <!-- ░░ 4. INFO INVOICE ░░ -->
+        <section class="card" id="section-info">
+          <div class="card-head">
+            <div class="card-head-icon">🧾</div>
+            <div>
+              <h2 class="card-title">Info Invoice</h2>
+              <p class="card-desc">Nomor, tanggal, dan detail invoice</p>
+            </div>
+          </div>
+          <div class="divider-gold"></div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="label" for="noInvoice">No. Invoice <span class="req">*</span></label>
+              <input class="input input-mono" type="text" id="noInvoice" placeholder="001/INV/09/2026" />
+            </div>
+            <div class="field-group">
+              <label class="label" for="tanggalInvoice">Tanggal Invoice</label>
+              <input class="input" type="date" id="tanggalInvoice" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="label" for="jatuhTempo">Jatuh Tempo</label>
+              <input class="input" type="date" id="jatuhTempo" />
+            </div>
+            <div class="field-group">
+              <label class="label" for="pemohon">Pemohon <span class="optional">(opsional)</span></label>
+              <input class="input" type="text" id="pemohon" placeholder="Nama pemohon invoice" />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="label" for="perihal">Perihal / Keterangan</label>
+            <textarea class="textarea" id="perihal" rows="2" placeholder="Deskripsi singkat pekerjaan, contoh: Jasa Desain Logo..."></textarea>
+          </div>
+        </section>
+
+        <!-- ░░ 5. ITEM / JASA ░░ -->
+        <section class="card" id="section-items">
+          <div class="card-head">
+            <div class="card-head-icon">📦</div>
+            <div>
+              <h2 class="card-title">Item / Jasa</h2>
+              <p class="card-desc">Daftar produk atau layanan yang ditagihkan</p>
+            </div>
+          </div>
+          <div class="divider-gold"></div>
+
+          <!-- Table header -->
+          <div class="item-header">
+            <span class="ih-desc">Deskripsi</span>
+            <span class="ih-price">Harga Satuan</span>
+            <span class="ih-qty">QTY</span>
+            <span class="ih-total">Jumlah</span>
+            <span class="ih-act"></span>
+          </div>
+
+          <div id="itemsContainer"></div>
+
+          <button class="btn btn-add" onclick="tambahItem()">
+            <span class="btn-add-icon">+</span> Tambah Item
+          </button>
+
+          <!-- Ringkasan -->
+          <div class="summary-box">
+            <div class="summary-row">
+              <span class="summary-key">Subtotal</span>
+              <span class="summary-val" id="subtotalDisplay">Rp 0</span>
+            </div>
+            <div class="summary-row" id="taxRowForm">
+              <span class="summary-key">
+                Pajak
+                <button class="btn-link" id="btnTogglePajak" onclick="togglePajak()">Sembunyikan</button>
+              </span>
+              <input class="input input-sm input-right" type="number" id="pajakInput" value="0" min="0"
+                     placeholder="0" oninput="hitungTotals()" />
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-row summary-grand-row">
+              <span class="summary-grand-key">Grand Total</span>
+              <span class="summary-grand-val" id="grandTotalDisplay">Rp 0</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ░░ 6. TERMS & CONDITIONS ░░ -->
+        <section class="card" id="section-terms">
+          <div class="card-head">
+            <div class="card-head-icon">📝</div>
+            <div>
+              <h2 class="card-title">Terms &amp; Conditions</h2>
+              <p class="card-desc">Syarat dan ketentuan pembayaran</p>
+            </div>
+          </div>
+          <div class="divider-gold"></div>
+
+          <div class="field-group">
+            <textarea class="textarea" id="termsInput" rows="3"
+              placeholder="All payments should be transferred to the account above no later than the due date.">All payments should be transferred to the account above no later than the due date.</textarea>
+          </div>
+        </section>
+
+        <!-- ░░ ACTION BAR ░░ -->
+        <div class="action-bar">
+          <button class="btn btn-primary btn-action" id="btnGenerateInvoice" onclick="generateInvoice()">
+            <span>🧾</span> Lihat Hasil Invoice
+          </button>
+          <button class="btn btn-outline-red btn-action" onclick="resetForm()">
+            <span>↺</span> Reset Form
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
