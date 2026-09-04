@@ -42,6 +42,23 @@ function translateUI() {
   const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
   nodes.forEach(node => { let t = node.nodeValue; Object.keys(replacements).forEach(k => { t = t.split(k).join(replacements[k]); }); node.nodeValue = t; });
   document.querySelectorAll('[placeholder]').forEach(el => { Object.keys(replacements).forEach(k => { if (el.placeholder === k) el.placeholder = replacements[k]; }); });
+  const text = (sel, value) => document.querySelectorAll(sel).forEach(el => { el.textContent = value; });
+  text('.brand-sub', 'Professional Invoice Generator');
+  text('#section-profil .card-title', 'Company Profile');
+  text('#section-profil .card-desc', 'Saved automatically online — available on all devices');
+  text('#section-klien .card-title', 'Client Details');
+  text('#section-klien .card-desc', 'Invoice recipient information');
+  text('#section-info .card-title', 'Invoice Information');
+  text('#section-items .card-title', 'Items / Services');
+  text('#section-items .card-desc', 'Products or services being billed');
+  text('#btnSimpanProfil', '💾  Save Profile');
+  text('#btnGenerateInvoice', '🧾  View Invoice');
+  text('#btnTogglePajak', 'Hide');
+  const fields = { namaPerusahaan:'Company name', alamatPerusahaan:'Company address', namaBank:'Bank name', pemohon:'Invoice requester name', perihal:'Brief work description, e.g. Logo Design Service...' };
+  Object.entries(fields).forEach(([id, value]) => { const el = document.getElementById(id); if (el) el.placeholder = value; });
+  document.querySelectorAll('.ih-desc').forEach(el => el.textContent = 'Description');
+  document.querySelectorAll('.ih-price').forEach(el => el.textContent = 'Unit Price');
+  document.querySelectorAll('.ih-total').forEach(el => el.textContent = 'Amount');
 }
 
 // ────────────────────────────────────────────────

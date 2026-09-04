@@ -42,6 +42,14 @@ function translateInvoiceUI() {
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
   nodes.forEach(node => { let t = node.nodeValue; Object.keys(map).forEach(k => { t = t.split(k).join(map[k]); }); node.nodeValue = t; });
+  const text = (sel, value) => document.querySelectorAll(sel).forEach(el => { el.textContent = value; });
+  text('.brand-sub', 'Professional Invoice Generator');
+  text('#btnCetak', '🖨  Print');
+  text('#btnKirimSheet', '📊  Send to Sheets');
+  text('#btnDownloadPDF', '⬇  Download PDF');
+  text('.inv-meta-label', 'Invoice Details');
+  document.querySelectorAll('.inv-det-k').forEach((el, i) => { el.textContent = ['Invoice No.','Date','Due Date','Subject','Requested By'][i] || el.textContent; });
+  document.querySelectorAll('.inv-th').forEach((el, i) => { el.textContent = ['Description','Unit Price','QTY','Amount'][i] || el.textContent; });
 }
 
 // ────────────────────────────────────────────────
@@ -361,6 +369,16 @@ let _toastTimer;
 function showToast(msg, type = "info") {
   const el = document.getElementById("toast");
   if (!el) return;
+  const translations = {
+    "Tidak ada data invoice.": "No invoice data available.",
+    "Data berhasil dikirim ke Google Sheet!": "Data sent to Google Sheets successfully!",
+    "Mengirim data ke Google Sheet…": "Sending data to Google Sheets…",
+    "URL Google Apps Script belum dikonfigurasi!": "Google Apps Script URL is not configured.",
+    "Dokumen invoice tidak ditemukan.": "Invoice document not found.",
+    "Membuat PDF, mohon tunggu…": "Creating PDF, please wait…",
+    "Menggunakan dialog Cetak Browser...": "Using the browser print dialog…"
+  };
+  Object.keys(translations).forEach(k => { msg = msg.replace(k, translations[k]); });
   clearTimeout(_toastTimer);
   el.textContent = msg;
   el.className = `toast ${type}`;
