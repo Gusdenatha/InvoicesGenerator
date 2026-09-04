@@ -225,10 +225,10 @@ function togglePajak() {
 
   if (pajakVisible) {
     input.style.display = '';
-    btn.textContent = 'Sembunyikan';
+    btn.textContent = 'Hide';
   } else {
     input.style.display = 'none';
-    btn.textContent = 'Tampilkan';
+    btn.textContent = 'Show';
   }
   hitungTotals();
 }
