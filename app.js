@@ -1,6 +1,6 @@
 'use strict';
 
-const GAS_URL        = 'https://script.google.com/macros/s/AKfycbwx4VgVQ7_Mp_AAndzHVEdTyF_E3ATe2ibAw_XV8haJEUfhS3LF8z6Jc32PPSsbQzEl/exec';
+const GAS_URL        = 'https://script.google.com/macros/s/AKfycbxHtz4VnK7fBF7rA6ld5CCAjgGyXPWX4oqP__Q1VxnZ1NX8yiGUVjYFBDYrHPJhjIlv/exec';
 const SPREADSHEET_ID = '1Lrdd3wrPHZneDly_iStPJRxq9mfQy2p5eWm3B64U16Y'; // ID spreadsheet
 
 // ────────────────────────────────────────────────
