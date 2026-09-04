@@ -6,7 +6,7 @@
 // ────────────────────────────────────────────────
 // ⚙️  KONFIGURASI — samakan dengan app.js
 // ────────────────────────────────────────────────
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbz51JzOWD5tvKjioVlRWrD_QfPG0Jg-qj_iMpJeYYOrUcWfoMj3aVMN4upn03W4Z5yB/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwx4VgVQ7_Mp_AAndzHVEdTyF_E3ATe2ibAw_XV8haJEUfhS3LF8z6Jc32PPSsbQzEl/exec';
 
 let INV = null; // current invoice data
 

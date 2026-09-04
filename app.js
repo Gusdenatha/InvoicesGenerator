@@ -1,7 +1,7 @@
 'use strict';
 
-const GAS_URL        = 'https://script.google.com/macros/s/AKfycbz51JzOWD5tvKjioVlRWrD_QfPG0Jg-qj_iMpJeYYOrUcWfoMj3aVMN4upn03W4Z5yB/exec';
-const SPREADSHEET_ID = '1QX4t8b79eZ2lPvsvmgiWxVHN557RSk_A9Rfj24rCBW4'; // ID spreadsheet
+const GAS_URL        = 'https://script.google.com/macros/s/AKfycbwx4VgVQ7_Mp_AAndzHVEdTyF_E3ATe2ibAw_XV8haJEUfhS3LF8z6Jc32PPSsbQzEl/exec';
+const SPREADSHEET_ID = '1Lrdd3wrPHZneDly_iStPJRxq9mfQy2p5eWm3B64U16Y'; // ID spreadsheet
 
 // ────────────────────────────────────────────────
 // INIT
@@ -34,6 +34,13 @@ function simpanProfil(silent = false) {
 
   localStorage.setItem('inv_profil', JSON.stringify(profil));
 
+  // Sinkronkan ke Google Sheets agar profil tersedia di perangkat lain.
+  fetch(GAS_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'saveProfile', spreadsheetId: SPREADSHEET_ID, profile: profil })
+  }).catch(err => console.warn('Profil online gagal disimpan:', err));
+
   // Show badge
   const badge = document.getElementById('profilBadge');
   if (badge) badge.style.display = '';
@@ -42,22 +49,32 @@ function simpanProfil(silent = false) {
   return true;
 }
 
+function terapkanProfil(p) {
+  if (!p) return;
+  setVal('namaPerusahaan', p.namaPerusahaan || '');
+  setVal('alamatPerusahaan', p.alamatPerusahaan || '');
+  setVal('teleponPerusahaan', p.teleponPerusahaan || '');
+  setVal('emailPerusahaan', p.emailPerusahaan || '');
+  setVal('namaBank', p.namaBank || '');
+  setVal('nomorRekening', p.nomorRekening || '');
+  const badge = document.getElementById('profilBadge');
+  if (badge && p.namaPerusahaan) badge.style.display = '';
+}
+
 function muatProfil() {
   const raw = localStorage.getItem('inv_profil');
-  if (!raw) return;
   try {
-    const p = JSON.parse(raw);
-    setVal('namaPerusahaan',    p.namaPerusahaan    || '');
-    setVal('alamatPerusahaan',  p.alamatPerusahaan  || '');
-    setVal('teleponPerusahaan', p.teleponPerusahaan || '');
-    setVal('emailPerusahaan',   p.emailPerusahaan   || '');
-    setVal('namaBank',          p.namaBank          || '');
-    setVal('nomorRekening',     p.nomorRekening     || '');
-
-    // Show saved badge
-    const badge = document.getElementById('profilBadge');
-    if (badge && p.namaPerusahaan) badge.style.display = '';
+    if (raw) terapkanProfil(JSON.parse(raw));
   } catch (_) {}
+
+  // JSONP dipakai karena Web App biasanya tidak mengirim header CORS.
+  const cb = `profilCallback_${Date.now()}`;
+  window[cb] = (p) => { if (p) { terapkanProfil(p); localStorage.setItem('inv_profil', JSON.stringify(p)); } cleanup(); };
+  const cleanup = () => { delete window[cb]; script.remove(); };
+  const script = document.createElement('script');
+  script.src = `${GAS_URL}?action=getProfile&spreadsheetId=${encodeURIComponent(SPREADSHEET_ID)}&callback=${cb}`;
+  script.onerror = cleanup;
+  document.head.appendChild(script);
 }
 
 
@@ -251,7 +268,22 @@ function generateInvoice() {
 // COPY GAS CODE
 // ────────────────────────────────────────────────
 function copyGASCode() {
-  const code = `function doPost(e) {
+  const code = `function doGet(e) {
+  var p = e.parameter || {};
+  var result = {};
+  if (p.action === 'getProfile') {
+    var sheet = SpreadsheetApp.openById(p.spreadsheetId).getSheetByName('Profil');
+    if (sheet && sheet.getLastRow() > 1) {
+      var row = sheet.getRange(2, 1, 1, 6).getValues()[0];
+      result = { namaPerusahaan: row[0], alamatPerusahaan: row[1], teleponPerusahaan: row[2], emailPerusahaan: row[3], namaBank: row[4], nomorRekening: row[5] };
+    }
+  }
+  var json = JSON.stringify(result);
+  return ContentService.createTextOutput((p.callback || 'callback') + '(' + json + ')')
+    .setMimeType(ContentService.MimeType.JAVASCRIPT);
+}
+
+function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) {
       throw new Error('Payload POST kosong.');
@@ -262,6 +294,15 @@ function copyGASCode() {
     }
     // Web App tidak selalu memiliki active spreadsheet; buka file secara eksplisit.
     var sheet = SpreadsheetApp.openById(data.spreadsheetId).getSheets()[0];
+
+    if (data.action === 'saveProfile') {
+      var profileSheet = SpreadsheetApp.openById(data.spreadsheetId).getSheetByName('Profil') || SpreadsheetApp.openById(data.spreadsheetId).insertSheet('Profil');
+      if (profileSheet.getLastRow() === 0) profileSheet.appendRow(['Nama Perusahaan','Alamat','Telepon','Email','Nama Bank','Nomor Rekening']);
+      var p = data.profile || {};
+      var values = [[p.namaPerusahaan || '', p.alamatPerusahaan || '', p.teleponPerusahaan || '', p.emailPerusahaan || '', p.namaBank || '', p.nomorRekening || '']];
+      if (profileSheet.getLastRow() < 2) profileSheet.getRange(2, 1, 1, 6).setValues(values); else profileSheet.getRange(2, 1, 1, 6).setValues(values);
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
+    }
     
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
